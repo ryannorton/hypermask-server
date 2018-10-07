@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import (
     make_password
 )
 
+from .exceptions import UserCreationError
+
 
 class HypermaskUser(models.Model):
     """
@@ -21,8 +23,12 @@ class HypermaskUser(models.Model):
 
     @classmethod
     def create(cls, username, raw_password_hash, encrypted_key=None):
+        if cls.objects.filter(username=username).exists():
+            raise UserCreationError('User already exists.')
+
         # Raw password hash from client is hashed again by the server before storing in db.
         password_hash = make_password(raw_password_hash)
+
         user = cls(
             username=username,
             password_hash=password_hash,
