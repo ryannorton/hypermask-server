@@ -42,3 +42,8 @@ class HypermaskUser(models.Model):
         Return a boolean of whether the raw_password_hash was correct.
         """
         return _check_password(raw_password_hash, self.password_hash)
+
+    def set_encrypted_key(self, encrypted_key):
+        self.encrypted_key = encrypted_key
+        self.save()
+        return self
